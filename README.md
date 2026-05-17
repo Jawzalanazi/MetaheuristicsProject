@@ -1,39 +1,44 @@
-# CS1463 Course Project  
-## Comparative Study of Two Metaheuristic Algorithms over TSP
+### CS1463 Course Project 
+### Comparative Study of Two Metaheuristic Algorithms over TSP
 
-This project implements and compares two metaheuristic algorithms for solving the Traveling Salesman Problem (TSP):
+This project compares two metaheuristic algorithms for solving the Traveling Salesman Problem (TSP):
 
-1. **Genetic Algorithm (GA)** — in-class algorithm  
-2. **Variable Neighborhood Search (VNS)** — new algorithm  
+- Genetic Algorithm (GA)
+- Variable Neighborhood Search (VNS)
 
-The goal is to find the shortest possible tour that visits each city exactly once and returns to the starting city.
+The goal is to find a short route that visits each city exactly once and returns to the starting city.
 
----
+### Problem Description
 
-## 1. Project Description
+The Traveling Salesman Problem (TSP) asks for the shortest possible tour among a set of cities.
 
-The Traveling Salesman Problem (TSP) is an optimization problem where a salesman must visit a set of cities exactly once and return to the starting city while minimizing the total travel distance.
+In this project, each solution is represented as a permutation of city numbers.
 
-Since TSP is difficult to solve exactly for large numbers of cities, this project uses metaheuristic algorithms to find good approximate solutions in a reasonable amount of time.
+Example:
 
----
+[3, 1, 4, 2, 5]
 
-## 2. Algorithms Used
+This means the tour starts from city 3, then visits city 1, city 4, city 2, city 5, and finally returns to city 3.
 
-### 2.1 Genetic Algorithm (GA)
+The main constraint is that each city must be visited exactly once.
 
-The Genetic Algorithm is inspired by natural evolution. It works with a population of candidate tours and improves them over generations.
+### Algorithms
 
-The GA implementation includes:
+### 1. Genetic Algorithm (GA)
 
-- Random initial population
-- Tournament selection
-- Ordered Crossover (OX)
-- Swap mutation
-- Elitism to keep the best solution
-- Fixed stopping rule based on number of generations
+GA is the in-class algorithm used in this project. It is inspired by natural evolution and works with a population of solutions.
 
-Main parameters:
+Main steps:
+
+- Generate an initial population of random tours
+- Evaluate each tour using total tour length
+- Select parents using tournament selection
+- Apply ordered crossover
+- Apply swap mutation
+- Keep the best solution using elitism
+- Repeat until the stopping rule is reached
+
+GA parameters:
 
 | Parameter | Value |
 |---|---|
@@ -41,83 +46,84 @@ Main parameters:
 | Crossover rate | 0.9 |
 | Mutation rate | 0.1 |
 | Tournament size | 3 |
-| Small instance stopping rule | 100 generations |
-| Large instance stopping rule | 200 generations |
+| berlin52 stopping rule | 100 generations |
+| kroA100 stopping rule | 200 generations |
 
----
+### 2. Variable Neighborhood Search (VNS)
 
-### 2.2 Variable Neighborhood Search (VNS)
+VNS is the new algorithm used in this project. It works with one solution at a time and changes the neighborhood structure when no improvement is found.
 
-Variable Neighborhood Search is a single-solution metaheuristic. It improves one solution by applying different neighborhood moves. If the algorithm gets stuck, it switches to another neighborhood structure to escape the local optimum.
+Main steps:
 
-The VNS implementation includes:
+- Start with a random tour
+- Improve it using limited 2-opt local search
+- Apply different neighborhood moves
+- If a better solution is found, restart from the first neighborhood
+- If no improvement is found, move to the next neighborhood
+- Repeat until the stopping rule is reached
 
-- Random initial tour
-- Local search using limited 2-opt
-- Three neighborhood operators:
-  - Swap
-  - 2-opt reverse segment
-  - Insert
-- Fixed stopping rule based on number of iterations
+VNS neighborhoods:
 
-Main parameters:
+- Swap
+- 2-opt
+- Insert
+
+VNS parameters:
 
 | Parameter | Value |
 |---|---|
 | Neighborhoods | Swap, 2-opt, Insert |
 | Local search attempts | 30 |
-| Small instance stopping rule | 100 iterations |
-| Large instance stopping rule | 200 iterations |
+| berlin52 stopping rule | 100 iterations |
+| kroA100 stopping rule | 200 iterations |
 
----
+### Datasets
 
-## 3. Dataset
-
-Two TSPLIB instances are used in this project:
+Two TSPLIB instances were used:
 
 | Instance | Number of Cities | Known Optimal Tour Length | Size |
 |---|---:|---:|---|
 | berlin52 | 52 | 7542 | Small |
 | kroA100 | 100 | 21282 | Large |
 
-The datasets are downloaded automatically in the code using `gdown`.
+The dataset files are downloaded in the code using `gdown`.
 
----
+### Experimental Setup
 
-## 4. Experimental Setup
+Both algorithms were tested using the same setup.
 
-Each algorithm is tested on both datasets using the same experimental setup.
+- Each algorithm was run 20 times
+- Random seeds from 0 to 19 were used
+- Both algorithms used the same stopping rule for each instance
+- The results were compared using solution quality and runtime
 
-For each dataset:
+Evaluation metrics:
 
-- Each algorithm is run **20 independent times**
-- Seeds from `0` to `19` are used
-- The same stopping rule is applied to both algorithms
-- The following metrics are recorded:
-  - Best tour length
-  - Worst tour length
-  - Average tour length
-  - Standard deviation
-  - Gap from known optimal solution
-  - Average runtime
+- Best tour length
+- Worst tour length
+- Average tour length
+- Standard deviation
+- Gap from the known optimal solution
+- Average runtime
 
 Stopping rules:
 
-| Instance | GA Stopping Rule | VNS Stopping Rule |
+| Instance | GA | VNS |
 |---|---|---|
 | berlin52 | 100 generations | 100 iterations |
 | kroA100 | 200 generations | 200 iterations |
 
----
+### Result Summary
 
-## 5. Requirements
+The comparison was based on effectiveness and efficiency.
 
-The project is implemented in Python 3.
+Effectiveness means how good the tour length is compared to the known optimal solution.
 
-Required libraries:
+Efficiency means how fast the algorithm runs.
 
-```python
-numpy
-pandas
-matplotlib
-gdown
+Based on the results:
+
+VNS found shorter tours on both berlin52 and kroA100.
+GA was faster on the small instance.
+GA has stronger exploration because it uses a population of solutions.
+VNS has stronger exploitation because it uses 2-opt local search and different neighborhoods.
